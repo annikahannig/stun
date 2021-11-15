@@ -127,11 +127,8 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %%%===================================================================
 start_listener(IP, Port, Transport, Opts, Owner)
-  when Transport == tcp; Transport == tls ->
-    OptsWithTLS = case Transport of
-		      tls -> [tls|Opts];
-		      tcp -> Opts
-		  end,
+  when Transport == tcp; Transport == tls; Transport == mixed ->
+    OptsWithTransport = [{transport, Transport}|Opts],
     case gen_tcp:listen(Port, [binary,
                                {ip, IP},
                                {packet, 0},
@@ -143,8 +140,8 @@ start_listener(IP, Port, Transport, Opts, Owner)
 			       {send_timeout_close, true}]) of
         {ok, ListenSocket} ->
             Owner ! {self(), ok},
-	    OptsWithTLS1 = stun:tcp_init(ListenSocket, OptsWithTLS),
-            accept(ListenSocket, OptsWithTLS1);
+	    OptsWithTransport1 = stun:tcp_init(ListenSocket, OptsWithTransport),
+            accept(ListenSocket, OptsWithTransport1);
         Err ->
             Owner ! {self(), Err}
     end;
