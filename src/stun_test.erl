@@ -60,8 +60,8 @@ add_tcp_listener_test() ->
 
 add_tls_listener_test() ->
     ?assertEqual(ok, stun_listener:add_listener(
-		       ?STUN_IP, ?STUNS_PORT, tcp,
-		       [tls, {certfile, "certfile.pem"}])).
+		       ?STUN_IP, ?STUNS_PORT, tls,
+		       [{certfile, "certfile.pem"}])).
 
 bind_udp_test() ->
     TrID = mk_trid(),
@@ -119,7 +119,7 @@ del_tcp_listener_test() ->
     ?assertEqual(ok, stun_listener:del_listener(?STUN_IP, ?STUN_PORT, tcp)).
 
 del_tls_listener_test() ->
-    ?assertEqual(ok, stun_listener:del_listener(?STUN_IP, ?STUNS_PORT, tcp)).
+    ?assertEqual(ok, stun_listener:del_listener(?STUN_IP, ?STUNS_PORT, tls)).
 
 allocate_udp_test() ->
     {ok, Socket} = gen_udp:open(0, [binary, {ip, ?STUN_IP}, {active, false}]),
