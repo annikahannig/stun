@@ -694,7 +694,7 @@ is_valid_subnet(_) ->
 
 is_tls_handshake(Sock) ->
     case gen_tcp:recv(Sock, 10, 500) of
-        {error, timeout} -> true;
+        {error, timeout} -> undefined;
         {ok, Data} ->
             ok = gen_tcp:unrecv(Sock, Data),
             case Data of
@@ -708,7 +708,10 @@ get_sockmod(tls, _Sock) -> fast_tls;
 get_sockmod(mixed, Sock) ->
     case is_tls_handshake(Sock) of
         true  -> fast_tls;
-        false -> gen_tcp
+        false -> gen_tcp;
+        undefined ->
+            io:format("READ TIMEOUT WHILE IS HANDSHAKE"),
+            fast_tls
     end.
 
 get_certfile(Opts) ->
