@@ -693,7 +693,7 @@ is_valid_subnet(_) ->
     false.
 
 is_tls_handshake(Sock) ->
-    case gen_tcp:recv(Sock, 10, 25) of
+    case gen_tcp:recv(Sock, 10, 500) of
         {error, timeout} -> true;
         {ok, Data} ->
             ok = gen_tcp:unrecv(Sock, Data),
