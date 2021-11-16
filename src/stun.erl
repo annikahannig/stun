@@ -693,11 +693,14 @@ is_valid_subnet(_) ->
     false.
 
 is_tls_handshake(Sock) ->
-    {ok, Data} = gen_tcp:recv(Sock, 0),
-    ok = gen_tcp:unrecv(Sock, Data),
-    case Data of
-        <<22, 3, _:4/binary, 0, _:2/binary, 3, _/binary>> -> true;
-        _ -> false
+    case gen_tcp:recv(Sock, 10, 25) of
+        {error, timeout} -> true;
+        {ok, Data} ->
+            ok = gen_tcp:unrecv(Sock, Data),
+            case Data of
+                <<22, 3, _:4/binary, 0, _:2/binary, 3, _/binary>> -> true;
+                _ -> false
+            end
     end.
 
 get_sockmod(tcp, _Sock) -> gen_tcp;
