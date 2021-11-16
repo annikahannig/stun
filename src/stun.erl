@@ -693,7 +693,7 @@ is_valid_subnet(_) ->
     false.
 
 is_tls_handshake(Sock) ->
-    {ok, Data} = gen_tcp:recv(Sock),
+    {ok, Data} = gen_tcp:recv(Sock, 0),
     ok = gen_tcp:unrecv(Sock, Data),
     case Data of
         <<22, 3, _:4/binary, 0, _:2/binary, 3, _/binary>> -> true;
